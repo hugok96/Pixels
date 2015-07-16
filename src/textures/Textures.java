@@ -1,7 +1,5 @@
 package textures;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,14 +12,13 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import main.Logger;
+import main.Pixels;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL30;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
-
-import main.Pixels;
 
 public class Textures {
 
@@ -54,25 +51,25 @@ public class Textures {
 		tnt_bottom = getTextureId("tnt_bottom");
 		glass = getTextureId("glass");
 		notFound = getTextureId("tex_not_found");
-		Pixels.log("Texture count: " + textures.size(), 1);
+		Logger.log("Texture count: " + textures.size(), 1);
 	}
 	
 	public static void generateTextureMap() {
 		textureMapSize = getTextureMapSize(textures.size());
 		textureSizeInMap = (float) TEXTURE_SIZE / (float) textureMapSize;
-		Pixels.log("Texturemap size: " + textureMapSize + "x" + textureMapSize, 1);
+		Logger.log("Texturemap size: " + textureMapSize + "x" + textureMapSize, 1);
 		BufferedImage textureMap = new BufferedImage(textureMapSize, textureMapSize, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = textureMap.createGraphics();
 		for(String key:textures.keySet()) {
 			BufferedImage block;
 			try {
-				block = ImageIO.read(new File("res/blocks/" + key + ".png"));				
+				block = ImageIO.read(new File(Pixels.BLOCK_DIRECTORY + key + ".png"));				
 			} catch (IOException e) {
-				Pixels.err("Could not find/read " + key + ".png!", 2);
+				Logger.err("Could not find/read " + key + ".png!", 2);
 				try {
-					block = ImageIO.read(new File("res/tex_not_found.png"));				
+					block = ImageIO.read(new File(Pixels.TEXTURE_FILE_NOT_FOUND));				
 				} catch (IOException ex) {
-					Pixels.err("Could not find/read tex_not_found.png!", 3);
+					Logger.err("Could not find/read tex_not_found.png!", 3);
 					block = new BufferedImage(TEXTURE_SIZE, TEXTURE_SIZE, BufferedImage.TYPE_INT_RGB);
 				}
 			}
@@ -84,12 +81,12 @@ public class Textures {
 		}
 		
 		try {
-			ImageIO.write(textureMap, "png", new File("res/texturemap.png"));
+			ImageIO.write(textureMap, "png", new File(Pixels.TEXTUREMAP_FILE));
 		} catch (IOException e) {
-			Pixels.err("COULD NOT SAVE TEXTUREMAP TO DISK!", 1);
+			Logger.err("COULD NOT SAVE TEXTUREMAP TO DISK!", 1);
 			System.exit(-1);
 		}
-		textureMapId = loadTexture("texturemap");
+		textureMapId = loadTexture(Pixels.TEXTUREMAP_NAME);
 	}
 	
 	private static int getTextureMapSize(int textureCount) {
@@ -117,15 +114,14 @@ public class Textures {
 	public static int loadTexture(String fileName) {
 		Texture texture = null;
 		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/"+fileName+".png"));
-			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+			texture = TextureLoader.getTexture("PNG", new FileInputStream(Pixels.RES_DIRECTORY+fileName+".png"));
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4F);
 		} catch (FileNotFoundException e) {
-			Pixels.err("Could not locate "+fileName+".png", 1);
+			Logger.err("Could not locate "+fileName+".png", 1);
 		} catch (IOException e) {
-			Pixels.err("An error occured while reading "+fileName+".png", 1);
+			Logger.err("An error occured while reading "+fileName+".png", 1);
 		}
 		int textureID = texture.getTextureID();
 		textureList.add(textureID);

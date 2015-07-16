@@ -33,10 +33,10 @@ public class EntityCamera {
 			position.y+=speed;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_K)) {
-			pitch-=1F;
+			pitch-=5F;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_I)) {
-			pitch+=1F;
+			pitch+=5F;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_O)) {
 			roll-=6.66F;
@@ -45,10 +45,10 @@ public class EntityCamera {
 			roll+=6.66F;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_J)) {
-			yaw-=1F;
+			yaw-=5F;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_L)) {
-			yaw+=1F;
+			yaw+=5F;
 		}
 	}
 

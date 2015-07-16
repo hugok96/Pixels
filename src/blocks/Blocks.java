@@ -13,10 +13,10 @@ public class Blocks {
 	public static Block dirt;
 	public static Block rock;
 	
-	public static void initialize() {Pixels.log(Textures.grass, 4);
-		grass = new Block(Textures.grass);
+	public static void initialize() {
+		grass = new Block(Textures.grass_top);
 		dirt = new Block(Textures.dirt);
-		rock = new Block(Textures.rock);
+		rock = new Block(Textures.stone);
 	}
 	
 	public static int generateId() {

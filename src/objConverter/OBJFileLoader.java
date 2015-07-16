@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.Logger;
 import main.Pixels;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -16,16 +17,14 @@ import org.lwjgl.util.vector.Vector3f;
 import textures.Textures;
 
 public class OBJFileLoader {
-	
-	private static final String RES_LOC = "res/";
 
 	public static ModelData loadOBJ(String objFileName, float customTexturePosition[]) {
 		FileReader isr = null;
-		File objFile = new File(RES_LOC + objFileName + ".obj");
+		File objFile = new File(Pixels.OBJ_DIRECTORY + objFileName + ".obj");
 		try {
 			isr = new FileReader(objFile);
 		} catch (FileNotFoundException e) {
-			Pixels.err("Could not locate " + objFileName + ".obj", 1);
+			Logger.err("Could not locate " + objFileName + ".obj", 1);
 		}
 		BufferedReader reader = new BufferedReader(isr);
 		String line;
@@ -81,23 +80,23 @@ public class OBJFileLoader {
 				texturesArray, normalsArray);
 		
 		int count = 0;
-		Pixels.err();
-		Pixels.err();
-		Pixels.err(texturesArray.length/2);
-		Pixels.err();
+//		Logger.err();
+//		Logger.err();
+//		Logger.err(texturesArray.length/2);
+//		Logger.err();
 		for(float coord:texturesArray) { //(int) Math.floor(count/8)
-			if(count % 2 == 0)
-				Pixels.err((count/2) + ": X" + texturesArray[count] + " Y" + texturesArray[count+1]);
-			count++;
+			//if(count % 2 == 0)
+				//Logger.err((count/2) + ": X" + (Math.round(texturesArray[count]*100)) + " Y" + (Math.round(texturesArray[count+1]*100)));
+			//count++;
 //			if(count == 0)
 //				texturesArray[count++] = 1;
 //			else
 //				texturesArray[count++] = 0;
 			
-//			if(count % 2 == 0)
-//				texturesArray[count++] = customTexturePosition[0] + (coord == 0 ? 0 : Textures.textureSizeInMap);
-//			else
-//				texturesArray[count++] = customTexturePosition[1] + (coord == 0 ? 0 : Textures.textureSizeInMap);
+			if(count % 2 == 0)
+				texturesArray[count++] = customTexturePosition[0] + (coord == 0 ? 0 : Textures.textureSizeInMap);
+			else
+				texturesArray[count++] = customTexturePosition[1] + (coord == 0 ? 0 : Textures.textureSizeInMap);
 			
 		}
 		
