@@ -1,6 +1,5 @@
 package blocks;
 
-import main.Pixels;
 import textures.Textures;
 
 public class Blocks {
@@ -14,9 +13,9 @@ public class Blocks {
 	public static Block rock;
 	
 	public static void initialize() {
-		grass = new Block(Textures.grass_top);
-		dirt = new Block(Textures.dirt);
-		rock = new Block(Textures.stone);
+		grass = new Block(Textures.grass_top, "grass");
+		dirt = new Block(Textures.dirt, "dirt");
+		rock = new Block(Textures.stone, "stone");
 	}
 	
 	public static int generateId() {

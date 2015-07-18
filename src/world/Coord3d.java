@@ -18,11 +18,7 @@ public class Coord3d {
 	
 	@Override
 	public int hashCode() {
-		int hash = 1;
-        hash = hash * 17 + ("X:" + this.x).hashCode();;
-        hash = hash * 31 + ("Y:" + this.y).hashCode();
-        hash = hash * 13 + ("Z:" + this.z).hashCode();;
-        return hash;
+        return (this.x + " - " + this.y + " - " + this.z).hashCode();
 	}
 	
 	@Override
@@ -32,5 +28,10 @@ public class Coord3d {
 			return obj.hashCode() == this.hashCode();
 		
 		return (this == obj);
+	}
+	
+	@Override
+	public String toString() {		
+		return "x" + this.x + ", y" + this.y + ", z" + this.z;
 	}
 }

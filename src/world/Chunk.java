@@ -3,42 +3,36 @@ package world;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import main.Logger;
 import main.Pixels;
-
-import org.lwjgl.util.vector.Vector3f;
-
 import blocks.Block;
 import blocks.Blocks;
 
 public class Chunk {
 
 	private Map<Coord3d, Block> blocks = new HashMap<Coord3d, Block>();
-	private List<Coord3d> renderableBlocks = new ArrayList<Coord3d>();
 	
-	public static final int CHUNK_SIZE_X = 64;
+	public static final int CHUNK_SIZE_X = 16;
 	public static final int CHUNK_SIZE_Y = 64;
-	public static final int CHUNK_SIZE_Z = 64;
+	public static final int CHUNK_SIZE_Z = 16;
 	
 	public Chunk(String heightmap) {
 		generate(heightmap);
-		initRenderableBlocks();		
+		//initRenderableBlocks();		
 	}
 	
-	public Map<Coord3d, Block> getRenderableBlocks() {
-		Map<Coord3d, Block> rBlocks = new HashMap<Coord3d, Block>();
-		for(Coord3d c:renderableBlocks)
-			rBlocks.put(c, blocks.get(c));
-			
-		return rBlocks;
-	}
+//	public Map<Coord3d, Block> getRenderableBlocks() {
+//		Map<Coord3d, Block> rBlocks = new HashMap<Coord3d, Block>();
+//		for(Coord3d c:renderableBlocks)
+//			rBlocks.put(c, blocks.get(c));
+//			
+//		return rBlocks;
+//	}
 	
 	private void generate(String heightmap) {
 		try {
@@ -56,10 +50,14 @@ public class Chunk {
 			    int blue = (pixel) & 0xff;
 			    if(!(red == 255 & green == 0 && blue == 255)) {
 			    	int pHeight = (int) Math.ceil((red)/8);
-			    	Logger.err(new Coord3d(j, pHeight, i));
+			    	if(blocks.containsKey(new Coord3d(j, pHeight, i)))
+		    			Logger.err("Block already exists: " + (j-(w/2)) + ", " + pHeight + ", " +  (i-(h/2)) + " - " + Blocks.grass.getName());
+		    			
 			    	blocks.put(new Coord3d(j, pHeight, i), Blocks.grass);
 			    	for(int g = 0; g < pHeight; g++) {
-				    	blocks.put(new Coord3d(j, pHeight-g-1, i), g >= 2 ? Blocks.rock : Blocks.dirt);
+			    		if(blocks.containsKey(new Coord3d(j, pHeight-g-1, i)))
+			    			Logger.err("Block already exists: " + (j-(w/2)) + ", " + pHeight + ", " +  (i-(h/2)) + " - " + Blocks.grass.getName());
+			    		blocks.put(new Coord3d(j, pHeight-g-1, i), g >= 2 ? Blocks.rock : Blocks.dirt);
 			    }
 			    		
 			    }
@@ -72,21 +70,21 @@ public class Chunk {
 		Logger.log("Blocks in chunk: " + blocks.size(), 3);
 	}
 	
-	public void initRenderableBlocks() {
-		Logger.log("Initializing renderable blocks..", 3);
-		for(Coord3d key:blocks.keySet()){
-			if(true || !blocks.containsKey(new Coord3d(key.x+1, key.y, key.z)) ||
-					!blocks.containsKey(new Coord3d(key.x-1, key.y, key.z)) ||
-					!blocks.containsKey(new Coord3d(key.x, key.y+1, key.z)) ||
-					!blocks.containsKey(new Coord3d(key.x, key.y-1, key.z)) ||
-					!blocks.containsKey(new Coord3d(key.x, key.y, key.z+1)) ||
-					!blocks.containsKey(new Coord3d(key.x, key.y, key.z-1))) {
-				renderableBlocks.add(key);		
-				}
-		}
-		Logger.log("Initialized renderable blocks!", 3);
-		Logger.log("Renderable blocks in chunk: " + renderableBlocks.size(), 4);
-	}
+//	public void initRenderableBlocks() {
+//		Logger.log("Initializing renderable blocks..", 3);
+//		for(Coord3d key:blocks.keySet()){
+//			if(!blocks.containsKey(new Coord3d(key.x+1, key.y, key.z)) ||
+//					!blocks.containsKey(new Coord3d(key.x-1, key.y, key.z)) ||
+//					!blocks.containsKey(new Coord3d(key.x, key.y+1, key.z)) ||
+//					!blocks.containsKey(new Coord3d(key.x, key.y-1, key.z)) ||
+//					!blocks.containsKey(new Coord3d(key.x, key.y, key.z+1)) ||
+//					!blocks.containsKey(new Coord3d(key.x, key.y, key.z-1))) {
+//				renderableBlocks.add(key);		
+//				}
+//		}
+//		Logger.log("Initialized renderable blocks!", 3);
+//		Logger.log("Renderable blocks in chunk: " + renderableBlocks.size(), 4);
+//	}
 	
 	/**
 	 * Gets the block at specified position
@@ -97,16 +95,42 @@ public class Chunk {
 	 * @return If exists, Block at xyz, otherwise NULL
 	 */
 	public Block getBlock(int x, int y, int z) {
-		return getBlock(new Vector3f(x, y, z));
+		return getBlock(new Coord3d(x, y, z));
 	}
 	
 	/**
 	 * Gets the block at specified position
 	 * 
-	 * @param pos The XYZ vector
+	 * @param pos The XYZ coord
 	 * @return If exists, Block at xyz, otherwise NULL
 	 */
-	public Block getBlock(Vector3f pos) {
-		return blocks.containsKey(pos) ? blocks.get(pos) : null;
+	public Block getBlock(Coord3d pos) {
+		return blockExists(pos) ? blocks.get(pos) : null;
+	}
+	
+	/**
+	 * Checks if a block exists at given x,y,z
+	 * 
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param z Z coordinate
+	 * @return True if exists, false otherwise
+	 */
+	public boolean blockExists(int x, int y, int z) {
+		return blockExists(new Coord3d(x, y, z));
+	}
+	
+	/**
+	 * Checks if a block exists at given position
+	 * 
+	 * @param pos The XYZ coord
+	 * @return True if exists, false otherwise
+	 */
+	public boolean blockExists(Coord3d pos) {
+		return blocks.containsKey(pos);
+	}
+	
+	public Map<Coord3d, Block> getBlocks() {
+		return this.blocks;
 	}
 }

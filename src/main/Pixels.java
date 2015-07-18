@@ -2,32 +2,23 @@ package main;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.Timer;
+
+import models.ModelUtils;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
-import blocks.Block;
-import blocks.Blocks;
-import entities.Entity;
-import entities.EntityCamera;
-import entities.EntityLight;
-import models.ModelUtils;
 import renderEngine.DisplayManager;
 import renderEngine.MasterRenderer;
 import textures.Textures;
-import world.Coord2d;
-import world.Coord3d;
 import world.World;
+import blocks.Blocks;
+import entities.EntityCamera;
+import entities.EntityLight;
 
 public class Pixels {
-	public static World world;
 	public static final String LOG_DIRECTORY = "logs/";
 	public static final String RES_DIRECTORY = "res/";
 	public static final String BLOCK_DIRECTORY = RES_DIRECTORY + "blocks/";
@@ -62,7 +53,7 @@ public class Pixels {
 		Logger.log("Blocks initialized!");
 		
 		Logger.log("Creating World..");
-		world = new World();
+		World.generate();
 		Logger.log("World created!");
 		Logger.log();
 		Logger.log("Starting game!");
@@ -75,10 +66,10 @@ public class Pixels {
 		
 		MasterRenderer renderer = new MasterRenderer();
 		
-		List<Entity> cubes = new ArrayList<Entity>();
-		Map<Coord3d, Block> blocks = world.getRenderableBlocks();
-		for(Coord3d c:blocks.keySet())
-			cubes.add(new Entity(blocks.get(c).getModel(), c.toVector(), 0, 0, 0, 0.5F));
+		//List<Entity> cubes = new ArrayList<Entity>();
+		//Map<Coord3d, Block> blocks = world.getRenderableBlocks();
+//		for(Coord3d c:blocks.keySet())
+//			cubes.add(new Entity(blocks.get(c).getModel(), c.toVector(), 0, 0, 0, 0.5F));
 		
 		//List<Entity> cubes = new ArrayList<Entity>();
 		//for(int i = 0; i < 64; i++) {
@@ -118,9 +109,9 @@ public class Pixels {
 		timer.start();
 		while(!Display.isCloseRequested()) {
 			//render
-			for(Entity cube:cubes) {
-				renderer.processEntity(cube);
-			}
+//			for(Entity cube:cubes) {
+//				renderer.processEntity(cube);
+//			}
 			renderer.render(light, camera);
 			DisplayManager.updateDisplay();
 		}

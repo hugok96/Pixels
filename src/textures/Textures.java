@@ -117,7 +117,7 @@ public class Textures {
 			texture = TextureLoader.getTexture("PNG", new FileInputStream(Pixels.RES_DIRECTORY+fileName+".png"));
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4F);
+			//GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4F);
 		} catch (FileNotFoundException e) {
 			Logger.err("Could not locate "+fileName+".png", 1);
 		} catch (IOException e) {

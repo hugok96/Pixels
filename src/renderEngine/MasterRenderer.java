@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Model;
 import shaders.StaticShader;
-import entities.Entity;
+import world.Coord3d;
+import world.World;
+import blocks.Block;
 import entities.EntityCamera;
 import entities.EntityLight;
 
@@ -16,25 +17,29 @@ public class MasterRenderer {
 	private StaticShader shader = new StaticShader();
 	private Renderer renderer = new Renderer(shader);
 	
-	private Map<Model, List<Entity>> entities = new HashMap<Model, List<Entity>>();
+	private Map<Block, List<Coord3d>> blocks = new HashMap<Block, List<Coord3d>>();
 	
 	public void render(EntityLight sun, EntityCamera camera) {
+		Map<Coord3d, Block> worldBlocks = World.getRenderableBlocks();
+		for(Coord3d pos:worldBlocks.keySet()) {
+			processBlock(pos, worldBlocks.get(pos));
+		}
 		renderer.prepare();
 		shader.start();
 		shader.loadLight(sun);
 		shader.loadViewMatrix(camera);
-		renderer.render(entities);
+		renderer.render(blocks);
 		shader.stop();
-		entities.clear();
+		blocks.clear();
 	}
 	
-	public void processEntity(Entity entity) {
-		if(entities.containsKey(entity.getModel())) {
-			entities.get(entity.getModel()).add(entity);
+	public void processBlock(Coord3d pos, Block block) {
+		if(blocks.containsKey(block)) {
+			blocks.get(block).add(pos);
 		} else {
-			List<Entity> list = new ArrayList<Entity>();
-			list.add(entity);
-			entities.put(entity.getModel(), list);
+			List<Coord3d> list = new ArrayList<Coord3d>();
+			list.add(pos);
+			blocks.put(block, list);
 		}
 	}
 	

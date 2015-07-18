@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.Model;
-import models.RawModel;
-import models.TexturedModel;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -17,7 +15,8 @@ import org.lwjgl.util.vector.Matrix4f;
 import shaders.StaticShader;
 import textures.Textures;
 import toolbox.Maths;
-import entities.Entity;
+import world.Coord3d;
+import blocks.Block;
 
 public class Renderer {
 	
@@ -45,12 +44,12 @@ public class Renderer {
 		
 	}
 	
-	public void render(Map<Model, List<Entity>> entities) {
-		for(Model model:entities.keySet()) {
-			prepareTexturedModel(model);
-			for(Entity entity:entities.get(model)) {
-				prepareInstance(entity);
-				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+	public void render(Map<Block, List<Coord3d>> blocks) {
+		for(Block block:blocks.keySet()) {
+			prepareTexturedModel(block.getModel());
+			for(Coord3d pos:blocks.get(block)) {
+				prepareInstance(pos);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, block.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
 			unbindTextureModel();
 		}
@@ -72,9 +71,9 @@ public class Renderer {
 		GL30.glBindVertexArray(0);
 	}
 	
-	private void prepareInstance(Entity entity) {
-		Matrix4f transofmationMatrix = Maths.createTransformationMatrix(entity.getPosition(), 
-				entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());		
+	private void prepareInstance(Coord3d pos) {
+		Matrix4f transofmationMatrix = Maths.createTransformationMatrix(pos.toVector(), 
+				0,0,0, Block.SCALE);		
 		shader.loadTransormationMatrix(transofmationMatrix);
 	}
 	
