@@ -13,7 +13,7 @@ public class ModelData {
 		this.textureCoords = textureCoords;
 		this.normals = normals;
 		this.indices = indices;
-		//this.furthestPoint = furthestPoint;
+		this.furthestPoint = furthestPoint;
 	}
 
 	public float[] getVertices() {

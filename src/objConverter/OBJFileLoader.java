@@ -80,19 +80,7 @@ public class OBJFileLoader {
 				texturesArray, normalsArray);
 		
 		int count = 0;
-//		Logger.err();
-//		Logger.err();
-//		Logger.err(texturesArray.length/2);
-//		Logger.err();
-		for(float coord:texturesArray) { //(int) Math.floor(count/8)
-			//if(count % 2 == 0)
-				//Logger.err((count/2) + ": X" + (Math.round(texturesArray[count]*100)) + " Y" + (Math.round(texturesArray[count+1]*100)));
-			//count++;
-//			if(count == 0)
-//				texturesArray[count++] = 1;
-//			else
-//				texturesArray[count++] = 0;
-			
+		for(float coord:texturesArray) {
 			if(count % 2 == 0)
 				texturesArray[count++] = customTexturePosition[0] + (coord == 0 ? 0 : Textures.textureSizeInMap);
 			else
