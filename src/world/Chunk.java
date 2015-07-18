@@ -17,12 +17,19 @@ public class Chunk {
 
 	private Map<Coord3d, Block> blocks = new HashMap<Coord3d, Block>();
 	
-	public static final int CHUNK_SIZE_X = 16;
+	public static final int CHUNK_SIZE_X = 128;
 	public static final int CHUNK_SIZE_Y = 64;
-	public static final int CHUNK_SIZE_Z = 16;
+	public static final int CHUNK_SIZE_Z = 128;
 	
-	public Chunk(String heightmap) {
-		generate(heightmap);
+	private final int x;
+	private final int z;
+	private final int h;
+	
+	public Chunk(int x, int z, int h) {
+		this.x = x;
+		this.z = z;
+		this.h = h;
+		generate(x, z, h);
 		//initRenderableBlocks();		
 	}
 	
@@ -34,38 +41,49 @@ public class Chunk {
 //		return rBlocks;
 //	}
 	
-	private void generate(String heightmap) {
-		try {
-			// get the BufferedImage, using the ImageIO class
-			BufferedImage image = 
-	        ImageIO.read(new File(Pixels.RES_DIRECTORY + heightmap + ".png"));
-			int w = image.getWidth();
-		    int h = image.getHeight();
-
-		    for (int i = 0; i < h; i++) {
-		      for (int j = 0; j < w; j++) {
-		        int pixel = image.getRGB(j, i);
-			    int red = (pixel >> 16) & 0xff;
-			    int green = (pixel >> 8) & 0xff;
-			    int blue = (pixel) & 0xff;
-			    if(!(red == 255 & green == 0 && blue == 255)) {
-			    	int pHeight = (int) Math.ceil((red)/8);
-			    	if(blocks.containsKey(new Coord3d(j, pHeight, i)))
-		    			Logger.err("Block already exists: " + (j-(w/2)) + ", " + pHeight + ", " +  (i-(h/2)) + " - " + Blocks.grass.getName());
-		    			
-			    	blocks.put(new Coord3d(j, pHeight, i), Blocks.grass);
-			    	for(int g = 0; g < pHeight; g++) {
-			    		if(blocks.containsKey(new Coord3d(j, pHeight-g-1, i)))
-			    			Logger.err("Block already exists: " + (j-(w/2)) + ", " + pHeight + ", " +  (i-(h/2)) + " - " + Blocks.grass.getName());
-			    		blocks.put(new Coord3d(j, pHeight-g-1, i), g >= 2 ? Blocks.rock : Blocks.dirt);
-			    }
-			    		
-			    }
-		      }
-		    }
-	    } catch (IOException e) {
-	      Logger.err(e.getMessage(), 2);
-	    }
+	private void generate(int x, int z, int h) {
+		float[][] noise = ChunkGenerator.generateNoise(x, z, h);
+		for(int i = 0; i < noise.length; i++) {
+			for(int j = 0; j < noise[i].length; j++) {
+		    	int pHeight = h + 4 + ((int) Math.round(noise[i][j]*h));
+				blocks.put(new Coord3d(j, pHeight, i), Blocks.grass);
+		    	for(int g = 0; g < pHeight; g++) {
+		    		blocks.put(new Coord3d(j, pHeight-g-1, i), g >= 2 ? Blocks.rock : Blocks.dirt);
+		    	}
+			}
+		}
+		
+//		try {
+//			// get the BufferedImage, using the ImageIO class
+//			BufferedImage image = 
+//	        ImageIO.read(new File(Pixels.RES_DIRECTORY + heightmap + ".png"));
+//			int w = image.getWidth();
+//		    int h = image.getHeight();
+//
+//		    for (int i = 0; i < h; i++) {
+//		      for (int j = 0; j < w; j++) {
+//		        int pixel = image.getRGB(j, i);
+//			    int red = (pixel >> 16) & 0xff;
+//			    int green = (pixel >> 8) & 0xff;
+//			    int blue = (pixel) & 0xff;
+//			    if(!(red == 255 & green == 0 && blue == 255)) {
+//			    	int pHeight = (int) Math.ceil((red)/8);
+//			    	if(blocks.containsKey(new Coord3d(j, pHeight, i)))
+//		    			Logger.err("Block already exists: " + (j-(w/2)) + ", " + pHeight + ", " +  (i-(h/2)) + " - " + Blocks.grass.getName());
+//		    			
+//			    	blocks.put(new Coord3d(j, pHeight, i), Blocks.grass);
+//			    	for(int g = 0; g < pHeight; g++) {
+//			    		if(blocks.containsKey(new Coord3d(j, pHeight-g-1, i)))
+//			    			Logger.err("Block already exists: " + (j-(w/2)) + ", " + pHeight + ", " +  (i-(h/2)) + " - " + Blocks.grass.getName());
+//			    		blocks.put(new Coord3d(j, pHeight-g-1, i), g >= 2 ? Blocks.rock : Blocks.dirt);
+//			    }
+//			    		
+//			    }
+//		      }
+//		    }
+//	    } catch (IOException e) {
+//	      Logger.err(e.getMessage(), 2);
+//	    }
 		Logger.log("Generated chunk!", 2);
 		Logger.log("Blocks in chunk: " + blocks.size(), 3);
 	}

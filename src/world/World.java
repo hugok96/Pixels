@@ -15,11 +15,7 @@ public class World {
 		
 	public static void generate() {
     	Logger.log("Generating chunks..", 1);
-    	for(int i =0; i < 2; i ++) {
-    		for(int j=0; j < 2; j++) {
-    			chunks.put(new Coord2d(-1+i, -1+j), new Chunk("heightmap"));
-    		}
-    	}
+		chunks.put(new Coord2d(0, 0), new Chunk(0, 0, 32));
 		Logger.log("Chunks generated!", 1);
 		Logger.log("Initializing renderable blocks..", 1);
 		initRenderableBlocks();

@@ -60,7 +60,7 @@ public class Pixels {
 		
 		
 		
-		EntityLight light = new EntityLight(new Vector3f(0,50F,0F), new Vector3f(1,1,1));
+		EntityLight light = new EntityLight(new Vector3f(0,150F,0F), new Vector3f(1,1,1));
 		
 		EntityCamera camera = new EntityCamera();
 		
