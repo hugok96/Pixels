@@ -15,7 +15,9 @@ public class World {
 		
 	public static void generate() {
     	Logger.log("Generating chunks..", 1);
-		chunks.put(new Coord2d(0, 0), new Chunk(0, 0, 32));
+    	for(int i = -4; i < 4; i ++)
+    		for(int j =-4; j<4;j++)
+				chunks.put(new Coord2d(i, j), new Chunk(i, j));
 		Logger.log("Chunks generated!", 1);
 		Logger.log("Initializing renderable blocks..", 1);
 		initRenderableBlocks();
@@ -29,7 +31,7 @@ public class World {
 					Logger.log("Chunk X:" + c.x + " Y:" + c.z + ".. ", 2);
 					Map<Coord3d, Block> cBlocks = chunks.get(c).getBlocks();
 					for(Coord3d key:cBlocks.keySet()) {
-						Coord3d absPos = new Coord3d(c.x * Chunk.CHUNK_SIZE_X + key.x, key.y, c.z * Chunk.CHUNK_SIZE_Z + key.z);
+						Coord3d absPos = new Coord3d(c.x * Chunk.CHUNK_SIZE + key.x, key.y, c.z * Chunk.CHUNK_SIZE + key.z);
 						if(!blockExists(new Coord3d(absPos.x+1, absPos.y, absPos.z)) ||
 								!blockExists(new Coord3d(absPos.x-1, absPos.y, absPos.z)) ||
 								!blockExists(new Coord3d(absPos.x, absPos.y+1, absPos.z)) ||
@@ -66,8 +68,8 @@ public class World {
 	}
 		
 	private static Coord2d getBlockChunkPosition(Coord3d pos) {
-		return new Coord2d((int) (pos.x >= 0 ? Math.floor(pos.x / Chunk.CHUNK_SIZE_X) : -1 + Math.ceil(pos.x / Chunk.CHUNK_SIZE_X)), 
-							(int) (pos.z >= 0 ? Math.floor(pos.z / Chunk.CHUNK_SIZE_Z) : -1 + Math.ceil(pos.z / Chunk.CHUNK_SIZE_Z)));
+		return new Coord2d((int) (pos.x >= 0 ? Math.floor(pos.x / Chunk.CHUNK_SIZE) : -1 + Math.ceil(pos.x / Chunk.CHUNK_SIZE)), 
+							(int) (pos.z >= 0 ? Math.floor(pos.z / Chunk.CHUNK_SIZE) : -1 + Math.ceil(pos.z / Chunk.CHUNK_SIZE)));
 	}
 
 	public static boolean blockExists(Coord3d pos) { 			
@@ -81,8 +83,8 @@ public class World {
 	}
 	
 	private static Coord3d getBlockInChunkPosition(Coord3d pos) {
-		pos.x = pos.x >= 0 ? pos.x % Chunk.CHUNK_SIZE_X : Chunk.CHUNK_SIZE_X - ((Math.abs(pos.x+1) % Chunk.CHUNK_SIZE_X)+1);
-		pos.z = pos.z >= 0 ? pos.z % Chunk.CHUNK_SIZE_Z : Chunk.CHUNK_SIZE_Z - ((Math.abs(pos.z+1) % Chunk.CHUNK_SIZE_Z)+1);
+		pos.x = pos.x >= 0 ? pos.x % Chunk.CHUNK_SIZE : Chunk.CHUNK_SIZE - ((Math.abs(pos.x+1) % Chunk.CHUNK_SIZE)+1);
+		pos.z = pos.z >= 0 ? pos.z % Chunk.CHUNK_SIZE : Chunk.CHUNK_SIZE - ((Math.abs(pos.z+1) % Chunk.CHUNK_SIZE)+1);
 		return pos;
 	}
 }

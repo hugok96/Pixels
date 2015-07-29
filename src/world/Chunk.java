@@ -1,15 +1,9 @@
 package world;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
 import main.Logger;
-import main.Pixels;
 import blocks.Block;
 import blocks.Blocks;
 
@@ -17,19 +11,17 @@ public class Chunk {
 
 	private Map<Coord3d, Block> blocks = new HashMap<Coord3d, Block>();
 	
-	public static final int CHUNK_SIZE_X = 128;
+	public static final int CHUNK_SIZE = 16;
 	public static final int CHUNK_SIZE_Y = 64;
-	public static final int CHUNK_SIZE_Z = 128;
+	public static final int CHUNK_AMPLIFICATION = 10;
 	
 	private final int x;
 	private final int z;
-	private final int h;
 	
-	public Chunk(int x, int z, int h) {
+	public Chunk(int x, int z) {
 		this.x = x;
 		this.z = z;
-		this.h = h;
-		generate(x, z, h);
+		generate(x, z);
 		//initRenderableBlocks();		
 	}
 	
@@ -41,11 +33,11 @@ public class Chunk {
 //		return rBlocks;
 //	}
 	
-	private void generate(int x, int z, int h) {
-		float[][] noise = ChunkGenerator.generateNoise(x, z, h);
+	private void generate(int x, int z) {
+		float[][] noise = ChunkGenerator.generateNoise(x, z);
 		for(int i = 0; i < noise.length; i++) {
 			for(int j = 0; j < noise[i].length; j++) {
-		    	int pHeight = h + 4 + ((int) Math.round(noise[i][j]*h));
+		    	int pHeight = Chunk.CHUNK_AMPLIFICATION + 4 + ((int) Math.round(noise[i][j]));
 				blocks.put(new Coord3d(j, pHeight, i), Blocks.grass);
 		    	for(int g = 0; g < pHeight; g++) {
 		    		blocks.put(new Coord3d(j, pHeight-g-1, i), g >= 2 ? Blocks.rock : Blocks.dirt);
