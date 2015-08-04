@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import main.Logger;
@@ -18,7 +19,7 @@ import textures.Textures;
 
 public class OBJFileLoader {
 
-	public static ModelData loadOBJ(String objFileName, float customTexturePosition[]) {
+	public static ModelData loadOBJ(String objFileName, float texPosTop[], float texPosSide[], float texPosBottom[]) {
 		FileReader isr = null;
 		File objFile = new File(Pixels.OBJ_DIRECTORY + objFileName + ".obj");
 		try {
@@ -81,10 +82,20 @@ public class OBJFileLoader {
 		
 		int count = 0;
 		for(float coord:texturesArray) {
-			if(count % 2 == 0)
-				texturesArray[count++] = customTexturePosition[0] + (coord == 0 ? 0 : Textures.textureSizeInMap);
+			if(Arrays.asList(22, 14, 13, 12).contains((int) Math.floor(count/2)))
+				if(count % 2 == 0)
+					texturesArray[count++] = texPosBottom[0] + (coord == 0 ? 0 : Textures.textureSizeInMap);
+				else
+					texturesArray[count++] = texPosBottom[1] + (coord == 0 ? 0 : Textures.textureSizeInMap);
+			else if(Arrays.asList(23, 17, 16, 15).contains((int) Math.floor(count/2)))
+				if(count % 2 == 0)
+					texturesArray[count++] = texPosTop[0] + (coord == 0 ? 0 : Textures.textureSizeInMap);
+				else
+					texturesArray[count++] = texPosTop[1] + (coord == 0 ? 0 : Textures.textureSizeInMap);
+			else if(count % 2 == 0)
+				texturesArray[count++] = texPosSide[0] + (coord == 0 ? 0 : Textures.textureSizeInMap);
 			else
-				texturesArray[count++] = customTexturePosition[1] + (coord == 0 ? 0 : Textures.textureSizeInMap);
+				texturesArray[count++] = texPosSide[1] + (coord == 0 ? 0 : Textures.textureSizeInMap);
 			
 		}
 		

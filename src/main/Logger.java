@@ -16,8 +16,8 @@ public class Logger {
 	
 	public static void initialize() {
 		File logDir = new File(Pixels.LOG_DIRECTORY);
-		File logFile = new File(Pixels.LOG_DIRECTORY + "log.log");
-		File errFile = new File(Pixels.LOG_DIRECTORY + "err.log");
+		File logFile = new File(Pixels.LOG_LOG_FILE);
+		File errFile = new File(Pixels.LOG_ERR_FILE);
 		boolean canLogL = false;
 		if(!logDir.exists()) {
 			if(!logDir.mkdir()) {

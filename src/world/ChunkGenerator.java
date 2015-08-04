@@ -1,25 +1,25 @@
 package world;
 
+import java.util.Random;
+
 
 public class ChunkGenerator {
 	
 	public static float[][] generateNoise(int x, int z) {
-		//if(!SimplexNoise.seedIsSet) {
-		//	SimplexNoise.setSeed(new Random().nextInt(Integer));
-		//}
+		if(!SimplexNoise.seedIsSet) {
+			SimplexNoise.setSeed(new Random().nextInt());
+		}
 	    float[][] noise = new float[Chunk.CHUNK_SIZE][Chunk.CHUNK_SIZE];
+	    
 	    //Frequency = features. Higher = more features
-	    float layerF = 0.003f;
+	    float layerF = Chunk.CHUNK_FEATURES;
+	    
 	    //Weight = smoothness. Higher frequency = more smoothness
-	    float weight = 1;
+	    float weight = Chunk.CHUNK_SMOOTHNESS;
+	    
 	    int offsetZ = x * Chunk.CHUNK_SIZE;
 	    int offsetX = z * Chunk.CHUNK_SIZE;
-//	    for(int i=0; i<Chunk.CHUNK_SIZE_X; i++)
-//	    	for(int j=0; j<Chunk.CHUNK_SIZE_Z; j++) {
-//	    		noise[i][j] = ((float) SimplexNoise.noise((i + offsetX), (j + offsetZ)*layerF)* weight) * h;
-//	    		//layerF *= 3.5f;
-//	    		//weight *= 0.5f;
-//	    	}
+
 	    for(int k = 0; k < 3; k++) {
 	            for(int i = 0; i < Chunk.CHUNK_SIZE; i++) {
 	                    for(int j = 0; j < Chunk.CHUNK_SIZE; j++) {

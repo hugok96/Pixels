@@ -10,8 +10,10 @@ public class Model {
 	private int vertexCount;
 	
 	public Model(String objFilename, int textureSideId, int textureTopId, int textureBottomId) {
-		float[] texturePosition = Textures.getTexturePosition(textureSideId);
-		ModelData data = OBJFileLoader.loadOBJ(objFilename, texturePosition);
+		float[] texturePositionTop = Textures.getTexturePosition(textureTopId);
+		float[] texturePositionSide = Textures.getTexturePosition(textureSideId);
+		float[] texturePositionBottom = Textures.getTexturePosition(textureBottomId);
+		ModelData data = OBJFileLoader.loadOBJ(objFilename, texturePositionTop, texturePositionSide, texturePositionBottom);
 		this.vaoID = ModelUtils.createEmptyVAO();
 		ModelUtils.bindIndicesBuffer(data.getIndices());
 		ModelUtils.storeDataInAttributeList(0, 3, data.getVertices());
