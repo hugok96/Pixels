@@ -1,5 +1,8 @@
 package blocks;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import textures.Textures;
 
 public class Blocks {
@@ -13,6 +16,8 @@ public class Blocks {
 	public static Block rock;
 	public static Block tnt;
 	
+	private static Map<Integer, Block> BlockIndices = new HashMap<Integer, Block>();
+	
 	public static void initialize() {
 		grass = new Block(Textures.grass, Textures.grass_top, Textures.dirt, "grass");
 		dirt = new Block(Textures.dirt, "dirt");
@@ -20,7 +25,12 @@ public class Blocks {
 		tnt = new Block(Textures.tnt, Textures.tnt_top, Textures.tnt_bottom, "tnt");
 	}
 	
-	public static int generateId() {
+	public static Block getBlockById(int id) {
+		return BlockIndices.get(id);
+	}
+	
+	public static int generateId(Block block) {
+		BlockIndices.put(blockCount, block);
 		return blockCount++;
 	}
 }

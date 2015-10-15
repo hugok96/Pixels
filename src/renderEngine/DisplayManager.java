@@ -21,7 +21,7 @@ public class DisplayManager {
 		
 		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.setTitle("Pixels❣");
+			Display.setTitle("Pixels!");
 			Display.create(new PixelFormat(), attribs);
 		} catch (LWJGLException e) {
 			e.printStackTrace();

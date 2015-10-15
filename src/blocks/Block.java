@@ -32,7 +32,7 @@ public class Block {
 		this.name = "blocks." + name;
 		
 		this.model = new ModelBlock(textureSideId, textureTopId, textureBottomId);
-		this.id = Blocks.generateId();
+		this.id = Blocks.generateId(this);
 	}
 	
 	public String getName() {

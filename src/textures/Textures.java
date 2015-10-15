@@ -2,26 +2,27 @@ package textures;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
 import main.Logger;
-import main.Pixels;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
+
+import FileSystem.Directories;
+import FileSystem.Extensions;
+import FileSystem.FileSystem;
+import FileSystem.Files;
+import FileSystem.HashFile;
 
 public class Textures {
 
@@ -61,17 +62,18 @@ public class Textures {
 		textureMapSize = getTextureMapSize(textures.size());
 		textureSizeInMap = (float) TEXTURE_SIZE / (float) textureMapSize;
 		Logger.log("Texturemap size: " + textureMapSize + "x" + textureMapSize, 1);
+		
 		if(checkTexturesChanged()) {
 			BufferedImage textureMap = new BufferedImage(textureMapSize, textureMapSize, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = textureMap.createGraphics();
 			for(String key:textures.keySet()) {
 				BufferedImage block;
 				try {
-					block = ImageIO.read(new File(Pixels.BLOCK_DIRECTORY + key + ".png"));				
+					block = ImageIO.read(new File(Directories.BLOCKS + key + Extensions.TEXTURES));				
 				} catch (IOException e) {
-					Logger.err("Could not find/read " + key + ".png!", 2);
+					Logger.err("Could not find/read " + key + Extensions.TEXTURES, 2);
 					try {
-						block = ImageIO.read(new File(Pixels.TEXTURE_FILE_NOT_FOUND));				
+						block = ImageIO.read(new File(Files.TEXTURE_NOT_FOUND));				
 					} catch (IOException ex) {
 						Logger.err("Could not find/read tex_not_found.png!", 3);
 						block = new BufferedImage(TEXTURE_SIZE, TEXTURE_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -85,50 +87,32 @@ public class Textures {
 			}
 			
 			try {
-				ImageIO.write(textureMap, "png", new File(Pixels.TEXTUREMAP_FILE));
+				ImageIO.write(textureMap, Extensions.TEXTURES.substring(1), new File(Files.TEXTURE_TEXTUREMAP));
 			} catch (IOException e) {
 				Logger.err("COULD NOT SAVE TEXTUREMAP TO DISK!", 1);
 				System.exit(-1);
 			}
 		}
-		textureMapId = loadTexture(Pixels.TEXTUREMAP_FILE, true);
+		textureMapId = loadTexture(Files.TEXTURE_TEXTUREMAP, true);
 	}
 	
 	private static boolean checkTexturesChanged() {
 		boolean hasChanged = false;
+		String hashFile = FileSystem.ReadFile(Files.TEXTURE_HASHES);
 		
-		File blockHashes = new File(Pixels.HASHES_BLOCKS_FILE);
-		if(new File(Pixels.CACHE_DIRECTORY).exists() && blockHashes.exists()) {		
-			String pHash = "";
-
-			try {
-			FileReader freader = new FileReader(blockHashes);
-			BufferedReader reader = new BufferedReader(freader);
-			String fileStrings = "";
-			Stream<String> lines = reader.lines();
-			for(Object s:lines.toArray())
-				fileStrings += (String)s;
-			pHash += fileStrings;
-			lines.close();
-			freader.close();
-			reader.close();
-			} catch (IOException e1) {
-				Logger.err("Couldn't close readers!", 2);
-			}
-			
-			
-			for(String key:textures.keySet()) {
-				BufferedImage block;
-				try {
-					block = ImageIO.read(new File(Pixels.BLOCK_DIRECTORY + key + ".png"));	
-					
-				} catch (IOException e) {
-					Logger.err("Could not find/read " + key + ".png!", 2);
-					try {
-						block = ImageIO.read(new File(Pixels.TEXTURE_FILE_NOT_FOUND));	
-					} catch (IOException ex) {
+		if(hashFile != null) {
+			HashFile hashes = HashFile.Import(hashFile);
+			if(hashes.Size() != textures.size()) {
+				hasChanged = true;
+			} else {
+				for(String key:textures.keySet()) {
+					int index = Textures.getTextureId(key);
+					String block = FileSystem.ReadFile(Directories.BLOCKS + key + Extensions.TEXTURES);
+					String[] hashData = hashes.GetEntry(index);
+					if(hashData == null || (block == null && hashData[0] == "1") || !FileSystem.GetHash(block).equals(hashData[2])) {
 						hasChanged = true;
-					}
+						break;
+					}	
 				}
 			}
 		} else {
@@ -142,70 +126,24 @@ public class Textures {
 	
 	private static void createTextureHashes() {
 		Logger.log("Creating texture hash file..", 2);
-		File cacheFile = new File(Pixels.HASHES_BLOCKS_FILE);
-		if(cacheFile.exists()) {
-			Logger.log("Old cache file found!", 3);
-			if(!cacheFile.delete())
-				Logger.err("Couldn't delete old cache file!", 3);
-			else
-				Logger.log("Old cache file deleted!", 3);
-		} 
-		
-		try {
-			if(cacheFile.createNewFile()) {
-				Logger.log("Cache file created!", 3);
-				if(cacheFile.canWrite()) {
-					FileReader file;
-					BufferedReader reader;
-					String pHash = "";
+		File cacheFile = FileSystem.CreateNewFile(Files.TEXTURE_HASHES, "Texture-Hashes", true);	
+		if(cacheFile != null) {
+			Logger.err("Failed to create a new Texture-Hashes file!", 3);
+		} else {
+			HashFile hashes = new HashFile();
 
-					Logger.log("Looping through textures..", 3);
-					for(String key:textures.keySet()) {
-						try {
-							file = new FileReader(Pixels.BLOCK_DIRECTORY + key + ".png");
-							reader = new BufferedReader(file);
-							String tex = "";
-							Stream<String> lines = reader.lines();
-							for(Object s:lines.toArray())
-								tex += (String)s;
-							pHash += textures.get(key) + "," + key + "," + tex.hashCode() + ";";
-							lines.close();
-							file.close();
-							reader.close();
-							
-						} catch (FileNotFoundException e) {
-							Logger.err("Could not locate " + key + ".png",4);
-						} catch (IOException e) {
-							Logger.err("Could not close readers!", 4);
-						}
-					}
-
-					Logger.log("Writing hashes to file..", 3);
-					
-					FileWriter fwriter = null;
-					try {
-						fwriter = new FileWriter(cacheFile);
-						fwriter.write(pHash);
-						Logger.log("Hashes written to file!", 3);
-					} catch (IOException e) {
-						Logger.err("Could not read/write cache file!", 4);
-					} finally {
-						if(fwriter != null) {
-							try {
-								fwriter.close();
-							} catch (IOException e) {
-								Logger.err("Could not close writer!", 4);
-							}
-						}
-					}
+			Logger.log("Looping through textures..", 3);
+			for(String key:textures.keySet()) {
+				String file = FileSystem.ReadFile(Directories.BLOCKS + key + Extensions.TEXTURES);
+				if(file != null) {
+					hashes.AddEntry(textures.get(key), new String[]{"1", key, FileSystem.GetHash(file)});
 				} else {
-					Logger.err("Cannot write to cache file!", 3);
+					hashes.AddEntry(textures.get(key), new String[]{"0", key});
 				}
-			} else {
-				Logger.err("Could not create cache file!", 3);
 			}
-		} catch (IOException e1) {
-			Logger.err("Could not create cache file!", 3);
+
+			Logger.log("Writing hashes to file..", 3);
+			FileSystem.WriteFile(cacheFile, hashes.Export(), "Texture Hashes");
 		}
 	}
 	
@@ -238,7 +176,7 @@ public class Textures {
 	public static int loadTexture(String fileName, boolean hasDirectory) {
 		Texture texture = null;
 		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream(hasDirectory ? fileName : Pixels.RES_DIRECTORY+fileName+".png"));
+			texture = TextureLoader.getTexture(Extensions.TEXTURES.substring(1).toUpperCase(), new FileInputStream(hasDirectory ? fileName : Directories.RESOURCES+fileName+Extensions.TEXTURES));
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 			//GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4F);
@@ -246,12 +184,12 @@ public class Textures {
 			if(hasDirectory)
 				Logger.err("Could not locate "+fileName, 1);
 			else
-				Logger.err("Could not locate "+fileName+".png", 1);
+				Logger.err("Could not locate "+fileName+Extensions.TEXTURES, 1);
 		} catch (IOException e) {
 			if(hasDirectory)
-				Logger.err("An error occured while reading "+fileName, 1);
+				Logger.err("An error occured while reading "+fileName+Extensions.TEXTURES, 1);
 			else
-				Logger.err("An error occured while reading "+fileName+".png", 1);
+				Logger.err("An error occured while reading "+fileName+Extensions.TEXTURES, 1);
 		}
 		int textureID = texture.getTextureID();
 		textureList.add(textureID);

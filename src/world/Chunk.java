@@ -20,6 +20,12 @@ public class Chunk {
 	private final int x;
 	private final int z;
 	
+	public Chunk (int x, int z, Map<Coord3d, Block> blocks) {
+		this.x = x;
+		this.z = z;
+		this.blocks = blocks;
+	}
+	
 	public Chunk(int x, int z) {
 		this.x = x;
 		this.z = z;

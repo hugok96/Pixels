@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import FileSystem.Directories;
+import FileSystem.Files;
+
 public class Logger {
 	
 	public static final int LOGTYPE_LOG = 1;
@@ -15,9 +18,9 @@ public class Logger {
 	private static FileWriter err;
 	
 	public static void initialize() {
-		File logDir = new File(Pixels.LOG_DIRECTORY);
-		File logFile = new File(Pixels.LOG_LOG_FILE);
-		File errFile = new File(Pixels.LOG_ERR_FILE);
+		File logDir = new File(Directories.LOGS);
+		File logFile = new File(Files.LOG_LOG_FILE);
+		File errFile = new File(Files.LOG_ERR_FILE);
 		boolean canLogL = false;
 		if(!logDir.exists()) {
 			if(!logDir.mkdir()) {

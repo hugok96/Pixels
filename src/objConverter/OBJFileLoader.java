@@ -15,13 +15,15 @@ import main.Pixels;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import FileSystem.Directories;
+import FileSystem.Extensions;
 import textures.Textures;
 
 public class OBJFileLoader {
 
 	public static ModelData loadOBJ(String objFileName, float texPosTop[], float texPosSide[], float texPosBottom[]) {
 		FileReader isr = null;
-		File objFile = new File(Pixels.OBJ_DIRECTORY + objFileName + ".obj");
+		File objFile = new File(Directories.OBJ + objFileName + Extensions.OBJ);
 		try {
 			isr = new FileReader(objFile);
 		} catch (FileNotFoundException e) {
