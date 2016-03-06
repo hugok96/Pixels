@@ -1,26 +1,34 @@
 package world;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import FileSystem.Directories;
 import FileSystem.Extensions;
 import FileSystem.FileSystem;
 import FileSystem.Files;
-import main.Logger;
 import blocks.Block;
 import blocks.Blocks;
+import entities.EntityModel;
+import entities.EntityPlayer;
+import main.Logger;
 
 public class World {
 
 	private static Map<Coord2d, Chunk> chunks = new HashMap<Coord2d, Chunk>();
 	private static ConcurrentHashMap<Coord3d, Block> renderableBlocks = new ConcurrentHashMap<Coord3d, Block>();
 	private static final int CHUNK_RENDER_DISTANCE = 1; //TODO: IMPLEMENT THIS!
+	public static EntityPlayer Player;
+	private static List<EntityModel> entities = new ArrayList<EntityModel>();
 		
 	public static void generate() {
+		SimplexNoise.setSeed(new Random().nextInt(Integer.MAX_VALUE));
     	Logger.log("Generating chunks..", 1);
     	for(int i = -4; i < 4; i ++)
     		for(int j =-4; j<4;j++)
@@ -64,10 +72,14 @@ public class World {
 					if(i++ == 0) {
 						coord = new Coord2d(Integer.parseInt(values[0]), Integer.parseInt(values[1]));
 					} else {
+						Block b = Blocks.getBlockById(Integer.parseInt(values[3]));
+						if(b == null) {
+							return false;
+						}
 						blocks.put(new Coord3d(Integer.parseInt(values[0]), 
 								Integer.parseInt(values[1]), 
 								Integer.parseInt(values[2])),
-								Blocks.getBlockById(Integer.parseInt(values[3])));
+								b);
 					}
 				}
 				World.chunks.put(coord, new Chunk(coord.x, coord.z, blocks));
@@ -103,6 +115,16 @@ public class World {
 	
 	public static Map<Coord3d, Block> getRenderableBlocks() {
 		return renderableBlocks;
+	}
+	
+	public static List<EntityModel> getRenderableEntities() {
+		List<EntityModel> temp = entities;
+		temp.add(Player);
+		return temp;
+	}
+	
+	public static void addEntity(EntityModel model) {
+		entities.add(model);
 	}
 	
 	public static Block getBlock(int x, int y, int z) {

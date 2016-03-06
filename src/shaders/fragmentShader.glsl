@@ -24,5 +24,5 @@ void main(void) {
 	//vec4 pixelColour = texture(textureSampler, pass_textureCoords);
 	//float x = 1.9;//2.675;
 	//bool doRound = false;
-	//vec4(floor((pixelColour.r*x)+(doRound==true?0.5:0))/x, floor((pixelColour.g*x)+(doRound==true?0.5:0))/x, floor((pixelColour.b*x)+(doRound==true?0.5:0))/x, 1.0);	
+	//out_Colour = vec4(floor((pixelColour.r*x)+(doRound==true?0.5:0))/x, floor((pixelColour.g*x)+(doRound==true?0.5:0))/x, floor((pixelColour.b*x)+(doRound==true?0.5:0))/x, 1.0);	
 }

@@ -1,55 +1,17 @@
 package entities;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
-public class EntityCamera {
+public class EntityCamera extends EntityBase {
 
-	private Vector3f position = new Vector3f(0, 50F, 50F);
-	private float pitch=20, yaw, roll;
-	private int speed = 1;
-	
-	public EntityCamera() {
-		
+	public EntityCamera(Vector3f pos) {
+		super(pos, 0, 0, 0);
 	}
+
+	private float pitch=30, yaw, roll;
 	
-	public void move() {
-		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			position.z-=speed;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			position.x+=speed;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			position.z+=speed;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			position.x-=speed;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-			position.y-=speed;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			position.y+=speed;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_K)) {
-			pitch-=5F;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_I)) {
-			pitch+=5F;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_O)) {
-			roll-=6.66F;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_U)) {
-			roll+=6.66F;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_J)) {
-			yaw-=5F;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_L)) {
-			yaw+=5F;
-		}
+	@Override
+	public void increaseRotation(float dx, float dy, float dz) {
 	}
 
 	public Vector3f getPosition() {

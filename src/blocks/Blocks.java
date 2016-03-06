@@ -14,7 +14,10 @@ public class Blocks {
 	public static Block grass;
 	public static Block dirt;
 	public static Block rock;
-	public static Block tnt;
+	public static Block eye;
+	public static Block cactus;
+	public static Block end_stone;
+	//public static Block tnt;
 	
 	private static Map<Integer, Block> BlockIndices = new HashMap<Integer, Block>();
 	
@@ -22,7 +25,10 @@ public class Blocks {
 		grass = new Block(Textures.grass, Textures.grass_top, Textures.dirt, "grass");
 		dirt = new Block(Textures.dirt, "dirt");
 		rock = new Block(Textures.stone, "stone");
-		tnt = new Block(Textures.tnt, Textures.tnt_top, Textures.tnt_bottom, "tnt");
+		eye = new Block(Textures.eye, "eye");
+		cactus = new Block(Textures.cactus, Textures.cactus_top, Textures.cactus_bottom, "cactus");
+		end_stone = new Block(Textures.end_stone, "end_stone");
+		//tnt = new Block(Textures.tnt, Textures.tnt_top, Textures.tnt_bottom, "tnt");
 	}
 	
 	public static Block getBlockById(int id) {

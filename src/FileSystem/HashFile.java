@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import main.Logger;
+
 public class HashFile {
 	private HashMap<Integer, String[]> _entries;
 	
@@ -56,9 +58,16 @@ public class HashFile {
 	
 	public static HashFile Import(String data) {
 		HashFile hashFile = new HashFile();
+		if(data.trim().isEmpty()) 
+			return hashFile;
+		
 		for(String entry : data.split(";")) {
 			String[] entryData = entry.split(",");
-			hashFile.AddEntry(Integer.parseInt(entryData[0]), Arrays.copyOfRange(entryData, 1, entryData.length));
+			try {
+				hashFile.AddEntry(Integer.parseInt(entryData[0]), Arrays.copyOfRange(entryData, 1, entryData.length));
+			} catch(Exception e) {
+				Logger.err("An invalid hash entry was found, the hash file might be flawed.", 4);
+			}
 		}
 		return hashFile;
 	}

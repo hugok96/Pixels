@@ -4,21 +4,14 @@ import models.Model;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public class Entity {
+public class EntityModel extends EntityBase{
 
 	private Model model;
-	private Vector3f position;
-	private float rotX, rotY, rotZ;
 	private float scale;
 	
-	public Entity(Model model, Vector3f position, float rotX,
-			float rotY, float rotZ, float scale) {
-		super();
+	public EntityModel(Model model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		super(position, rotX, rotY, rotZ);
 		this.model = model;
-		this.position = position;
-		this.rotX = rotX;
-		this.rotY = rotY;
-		this.rotZ = rotZ;
 		this.scale = scale;
 	}
 
@@ -26,12 +19,6 @@ public class Entity {
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
-	}
-	
-	public void increaseRotation(float dx, float dy, float dz) {
-		this.rotX += dx;
-		this.rotY += dy;
-		this.rotZ += dz;
 	}
 
 	public Model getModel() {

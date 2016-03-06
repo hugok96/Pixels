@@ -37,9 +37,9 @@ public class Chunk {
 		for(int i = 0; i < noise.length; i++) {
 			for(int j = 0; j < noise[i].length; j++) {
 		    	int pHeight = Chunk.CHUNK_AMPLIFICATION + 4 + ((int) Math.round(noise[i][j]));
-				blocks.put(new Coord3d(j, pHeight, i), Blocks.grass);
+				blocks.put(new Coord3d(j, pHeight, i), Blocks.cactus);
 		    	for(int g = 0; g < pHeight; g++) {
-		    		blocks.put(new Coord3d(j, pHeight-g-1, i), g >= 2 ? Blocks.rock : Blocks.dirt);
+		    		blocks.put(new Coord3d(j, pHeight-g-1, i), g >= 2 ? Blocks.end_stone : Blocks.eye);
 		    	}
 			}
 		}

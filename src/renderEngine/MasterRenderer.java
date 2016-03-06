@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import shaders.StaticShader;
-import world.Coord3d;
-import world.World;
 import blocks.Block;
 import entities.EntityCamera;
 import entities.EntityLight;
+import entities.EntityModel;
+import shaders.StaticShader;
+import world.Coord3d;
+import world.World;
 
 public class MasterRenderer {
 	
@@ -18,17 +19,20 @@ public class MasterRenderer {
 	private Renderer renderer = new Renderer(shader);
 	
 	private Map<Block, List<Coord3d>> blocks = new HashMap<Block, List<Coord3d>>();
+	private List<EntityModel> entities = new ArrayList<EntityModel>();
 	
 	public void render(EntityLight sun, EntityCamera camera) {
 		Map<Coord3d, Block> worldBlocks = World.getRenderableBlocks();
 		for(Coord3d pos:worldBlocks.keySet()) {
 			processBlock(pos, worldBlocks.get(pos));
 		}
+		entities.addAll(World.getRenderableEntities());
 		renderer.prepare();
 		shader.start();
 		shader.loadLight(sun);
 		shader.loadViewMatrix(camera);
 		renderer.render(blocks);
+		renderer.render(entities);
 		shader.stop();
 		blocks.clear();
 	}

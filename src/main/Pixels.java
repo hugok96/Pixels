@@ -17,9 +17,11 @@ import renderEngine.DisplayManager;
 import renderEngine.MasterRenderer;
 import textures.Textures;
 import world.World;
+import blocks.Block;
 import blocks.Blocks;
 import entities.EntityCamera;
 import entities.EntityLight;
+import entities.EntityPlayer;
 
 public class Pixels {	
 	
@@ -53,7 +55,7 @@ public class Pixels {
 		Logger.log("Blocks initialized!");
 		
 		Logger.log("Creating World...");
-		if(new File(Files.WORLD_TEST_WORLD).exists()) {
+		if(false && new File(Files.WORLD_TEST_WORLD).exists()) {
 			Logger.log("Savegame found!", 1);
 			Logger.log("Loading savegame...", 2);
 			if(World.load("test")) {
@@ -76,13 +78,16 @@ public class Pixels {
 		Logger.log("Starting game!");
 		
 		
-		EntityLight light = new EntityLight(new Vector3f(0,150F,0F), new Vector3f(1,1,1));
-		EntityCamera camera = new EntityCamera();
+		EntityLight light = new EntityLight(new Vector3f(15F,130,0F), new Vector3f(1,1,1));
+		EntityCamera camera = new EntityCamera(new Vector3f(0F, 42, 64F));
+		World.Player = new EntityPlayer(new Vector3f(0,30,50), 0, 0, 0, Block.SCALE);
 		MasterRenderer renderer = new MasterRenderer();
 		
-		Timer timer = new Timer(15, new ActionListener() {
+		Timer timer = new Timer(1, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				camera.move();
+				World.Player.move(camera);
+				//camera.move();
+				//Tick
 			}
 		});
 		timer.start();

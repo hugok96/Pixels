@@ -3,20 +3,21 @@ package renderEngine;
 import java.util.List;
 import java.util.Map;
 
-import models.Model;
-
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
+import blocks.Block;
+import entities.EntityModel;
+import models.Model;
 import shaders.StaticShader;
 import textures.Textures;
 import toolbox.Maths;
 import world.Coord3d;
-import blocks.Block;
 
 public class Renderer {
 	
@@ -53,6 +54,21 @@ public class Renderer {
 			}
 			unbindTextureModel();
 		}
+	}
+	
+	public void render(List<EntityModel> models) {
+		for(EntityModel entity:models) {
+			prepareTexturedModel(entity.getModel());
+			prepareEntityInstance(entity);
+			GL11.glDrawElements(GL11.GL_TRIANGLES, entity.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);			
+			unbindTextureModel();
+		}
+	}
+	
+	private void prepareEntityInstance(EntityModel entity) {
+		Matrix4f transofmationMatrix = Maths.createTransformationMatrix(entity.getPosition(), 
+				0,0,0, entity.getScale());		
+		shader.loadTransormationMatrix(transofmationMatrix);
 	}
 	
 	private void prepareTexturedModel(Model model) {

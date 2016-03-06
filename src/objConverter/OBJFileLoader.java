@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.Logger;
-import main.Pixels;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;

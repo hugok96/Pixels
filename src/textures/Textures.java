@@ -28,7 +28,7 @@ public class Textures {
 
 	public static int grass, grass_top, dirt, rock, stone, obsidian, 
 					  oak, oak_top, wood, tnt, tnt_top, tnt_bottom,
-					  glass, notFound, egg;
+					  glass, notFound, egg, eye, end_stone, cactus, cactus_top, cactus_bottom;
 	
 	private static HashMap<String, Integer> textures = new HashMap<String, Integer>();
 	private static List<Integer> textureList = new ArrayList<Integer>();
@@ -54,6 +54,11 @@ public class Textures {
 		tnt_top = getTextureId("tnt_top");
 		tnt_bottom = getTextureId("tnt_bottom");
 		glass = getTextureId("glass");
+		eye = getTextureId("eye");
+		end_stone = getTextureId("end_stone");
+		cactus = getTextureId("cactus_side");
+		cactus_top = getTextureId("cactus_top");
+		cactus_bottom = getTextureId("cactus_bottom");
 		notFound = getTextureId("tex_not_found");
 		Logger.log("Texture count: " + textures.size(), 1);
 	}
@@ -127,7 +132,7 @@ public class Textures {
 	private static void createTextureHashes() {
 		Logger.log("Creating texture hash file..", 2);
 		File cacheFile = FileSystem.CreateNewFile(Files.TEXTURE_HASHES, "Texture-Hashes", true);	
-		if(cacheFile != null) {
+		if(cacheFile == null) {
 			Logger.err("Failed to create a new Texture-Hashes file!", 3);
 		} else {
 			HashFile hashes = new HashFile();

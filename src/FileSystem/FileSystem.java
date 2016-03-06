@@ -6,11 +6,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.stream.Stream;
 
 import main.Logger;
-import main.Pixels;
 
 public class FileSystem {
 	private static FileReader _freader;
